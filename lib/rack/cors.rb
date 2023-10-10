@@ -72,10 +72,11 @@ module Rack
       if env[HTTP_ORIGIN]
         debug(env) do
           ['Incoming Headers:',
+           "  Amazon Trace Id: #{env['HTTP_X_AMZN_TRACE_ID']}",
            "  Origin: #{env[HTTP_ORIGIN]}",
            "  Path-Info: #{path}",
            "  Access-Control-Request-Method: #{env[HTTP_ACCESS_CONTROL_REQUEST_METHOD]}",
-           "  Access-Control-Request-Headers: #{env[HTTP_ACCESS_CONTROL_REQUEST_HEADERS]}"].join("\n")
+           "  Access-Control-Request-Headers: #{env[HTTP_ACCESS_CONTROL_REQUEST_HEADERS]}"].join('')
         end
 
         if env[REQUEST_METHOD] == OPTIONS && env[HTTP_ACCESS_CONTROL_REQUEST_METHOD]
