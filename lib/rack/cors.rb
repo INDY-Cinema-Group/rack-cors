@@ -74,13 +74,23 @@ module Rack
           ['Incoming Headers:',
            "  Amazon Trace Id: #{env['HTTP_X_AMZN_TRACE_ID']}",
            "  Origin: #{env[HTTP_ORIGIN]}",
+           "  Method: #{env[REQUEST_METHOD]}",
            "  Path-Info: #{path}",
            "  Access-Control-Request-Method: #{env[HTTP_ACCESS_CONTROL_REQUEST_METHOD]}",
            "  Access-Control-Request-Headers: #{env[HTTP_ACCESS_CONTROL_REQUEST_HEADERS]}"].join('')
         end
 
         if env[REQUEST_METHOD] == OPTIONS && env[HTTP_ACCESS_CONTROL_REQUEST_METHOD]
-          return [400, {}, []] unless Rack::Utils.valid_path?(path)
+          unless Rack::Utils.valid_path?(path)
+            ['[CORS OPTIONS_INVALID_PATH]',
+             "  Amazon Trace Id: #{env['HTTP_X_AMZN_TRACE_ID']}",
+             "  Origin: #{env[HTTP_ORIGIN]}",
+             "  Method: #{env[REQUEST_METHOD]}",
+             "  Path-Info: #{path}",
+             "  Access-Control-Request-Method: #{env[HTTP_ACCESS_CONTROL_REQUEST_METHOD]}",
+             "  Access-Control-Request-Headers: #{env[HTTP_ACCESS_CONTROL_REQUEST_HEADERS]}"].join('')
+            return [400, {}, []]
+          end
 
           headers = process_preflight(env, path)
           debug(env) do
@@ -97,6 +107,7 @@ module Rack
            "  Amazon Trace Id: #{env['HTTP_X_AMZN_TRACE_ID']}",
            "  Origin: #{env[HTTP_ORIGIN]}",
            "  Path-Info: #{path}",
+           "  Method: #{env[REQUEST_METHOD]}",
            "  Access-Control-Request-Method: #{env[HTTP_ACCESS_CONTROL_REQUEST_METHOD]}",
            "  Access-Control-Request-Headers: #{env[HTTP_ACCESS_CONTROL_REQUEST_HEADERS]}"].join('')
         end
