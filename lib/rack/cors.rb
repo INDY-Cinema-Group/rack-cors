@@ -92,6 +92,15 @@ module Rack
           add_headers = process_cors(env, path)
         end
       else
+        debug(env) do
+          ['[CORS MISS_NO_ORIGIN] Incoming Headers:',
+           "  Amazon Trace Id: #{env['HTTP_X_AMZN_TRACE_ID']}",
+           "  Origin: #{env[HTTP_ORIGIN]}",
+           "  Path-Info: #{path}",
+           "  Access-Control-Request-Method: #{env[HTTP_ACCESS_CONTROL_REQUEST_METHOD]}",
+           "  Access-Control-Request-Headers: #{env[HTTP_ACCESS_CONTROL_REQUEST_HEADERS]}"].join('')
+        end
+
         Result.miss(env, Result::MISS_NO_ORIGIN)
       end
 
@@ -189,6 +198,15 @@ module Rack
         cors
 
       else
+        debug(env) do
+          ["[CORS #{error}] Incoming Headers:",
+           "  Amazon Trace Id: #{env['HTTP_X_AMZN_TRACE_ID']}",
+           "  Origin: #{env[HTTP_ORIGIN]}",
+           "  Path-Info: #{path}",
+           "  Access-Control-Request-Method: #{env[HTTP_ACCESS_CONTROL_REQUEST_METHOD]}",
+           "  Access-Control-Request-Headers: #{env[HTTP_ACCESS_CONTROL_REQUEST_HEADERS]}"].join('')
+        end
+
         Result.miss(env, error)
         nil
       end
